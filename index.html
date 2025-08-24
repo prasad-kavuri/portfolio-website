@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prasad Kavuri - AI Engineering Executive | Agentic AI Leader</title>
+    <!-- ADD THE CHATBOT CSS HERE -->
+    <link rel="stylesheet" href="chatbot.css">
     <meta name="description"
         content="AI/ML Executive with 20+ years experience. Led India's first Agentic AI platform, scaled global teams of 85+ engineers, delivered $M+ cost savings through AI transformation.">
     <meta name="keywords"
@@ -702,6 +704,59 @@
             </div>
         </div>
     </div>
+
+    <!-- Claude AI Chatbot -->
+    <button class="chat-toggle" id="chatToggle">🤖</button>
+
+    <div class="chatbot-container" id="chatbotContainer">
+        <div class="chatbot-header">
+            <div class="chatbot-title">
+                <div class="claude-icon">C</div>
+                Ask Claude about Prasad
+            </div>
+            <button class="close-btn" id="closeChat">×</button>
+        </div>
+
+        <div class="chat-messages" id="chatMessages">
+            <div class="message claude intro-message">
+                👋 Hi! I'm Claude, Prasad's AI assistant. I can help you learn about his AI Engineering leadership, his
+                work at Krutrim, Ola, and HERE Technologies, or his technical expertise in LLMs and Agentic AI
+                platforms.
+            </div>
+            <div class="quick-actions">
+                <button class="quick-action"
+                    onclick="sendQuickMessage('Tell me about Kruti.ai platform')">Kruti.ai</button>
+                <button class="quick-action" onclick="sendQuickMessage('What is his experience at Ola?')">Ola
+                    Experience</button>
+                <button class="quick-action" onclick="sendQuickMessage('His AI leadership achievements?')">AI
+                    Leadership</button>
+                <button class="quick-action" onclick="sendQuickMessage('How to contact him?')">Contact</button>
+            </div>
+        </div>
+
+        <div class="typing-indicator" id="typingIndicator">
+            <div class="typing-dots">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+
+        <div class="chat-input-container">
+            <div class="chat-input-wrapper">
+                <textarea class="chat-input" id="chatInput"
+                    placeholder="Ask me anything about Prasad's AI Engineering background..." rows="1"
+                    maxlength="500"></textarea>
+                <button class="send-btn" id="sendBtn" disabled>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M2,21L23,12L2,3V10L17,12L2,14V21Z" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- ADD THE CHATBOT JAVASCRIPT HERE -->
+    <script src="chatbot.js"></script>
 </body>
 
 </html>
