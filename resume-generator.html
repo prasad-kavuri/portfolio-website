@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Resume Generator - Prasad Kavuri</title>
+    <link rel="stylesheet" href="resume-generator.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <a href="index.html" class="back-link">← Back to Portfolio</a>
+                <h1>AI Resume Generator</h1>
+                <p>Powered by Advanced AI to create tailored resumes from Prasad's extensive experience</p>
+            </div>
+        </header>
+
+        <!-- Progress Bar -->
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-steps">
+                <div class="step active" data-step="1">
+                    <span class="step-number">1</span>
+                    <span class="step-label">Job Details</span>
+                </div>
+                <div class="step" data-step="2">
+                    <span class="step-number">2</span>
+                    <span class="step-label">Focus Areas</span>
+                </div>
+                <div class="step" data-step="3">
+                    <span class="step-number">3</span>
+                    <span class="step-label">Customization</span>
+                </div>
+                <div class="step" data-step="4">
+                    <span class="step-number">4</span>
+                    <span class="step-label">Generate</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Step 1: Job Details -->
+            <div class="form-section active" id="step1">
+                <h2>Job Details</h2>
+                <p class="section-description">Paste the job description or enter details about the target position</p>
+
+                <div class="form-group">
+                    <label for="jobTitle">Target Job Title *</label>
+                    <input type="text" id="jobTitle" placeholder="e.g., Head of AI Engineering, VP of Engineering"
+                        required>
+                </div>
+
+                <div class="form-group">
+                    <label for="companyName">Company Name</label>
+                    <input type="text" id="companyName" placeholder="e.g., Google, Meta, OpenAI">
+                </div>
+
+                <div class="form-group">
+                    <label for="jobDescription">Job Description *</label>
+                    <textarea id="jobDescription" rows="8"
+                        placeholder="Paste the full job description here, or describe the key requirements and responsibilities..."
+                        required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="industry">Industry</label>
+                    <select id="industry">
+                        <option value="">Select Industry</option>
+                        <option value="ai-ml">AI/ML & Deep Tech</option>
+                        <option value="saas">Enterprise SaaS</option>
+                        <option value="fintech">Fintech</option>
+                        <option value="automotive">Automotive & Mobility</option>
+                        <option value="ecommerce">E-commerce</option>
+                        <option value="healthtech">Healthcare Tech</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="resumeGenerator.nextStep()">Next Step →</button>
+                </div>
+            </div>
+
+            <!-- Step 2: Focus Areas -->
+            <div class="form-section" id="step2">
+                <h2>Experience Focus Areas</h2>
+                <p class="section-description">Select which experiences to emphasize based on the job requirements</p>
+
+                <div class="experience-selector">
+                    <div class="experience-card selected" data-exp="krutrim">
+                        <div class="exp-checkbox">✓</div>
+                        <h3>Krutrim - Head of AI Engineering</h3>
+                        <p class="exp-period">Mar 2025 - Present</p>
+                        <ul class="exp-highlights">
+                            <li>India's first Agentic AI platform (Kruti.ai)</li>
+                            <li>Leading 200+ engineers</li>
+                            <li>50% latency reduction, 40% cost savings</li>
+                            <li>Multi-model LLM orchestration</li>
+                        </ul>
+                    </div>
+
+                    <div class="experience-card selected" data-exp="ola">
+                        <div class="exp-checkbox">✓</div>
+                        <h3>Ola - Senior Director of Engineering</h3>
+                        <p class="exp-period">Sep 2023 - Feb 2025</p>
+                        <ul class="exp-highlights">
+                            <li>Ola Maps B2B platform launch</li>
+                            <li>13,000+ B2B customers</li>
+                            <li>70% infrastructure cost reduction</li>
+                            <li>AI-powered route optimization</li>
+                        </ul>
+                    </div>
+
+                    <div class="experience-card selected" data-exp="here">
+                        <div class="exp-checkbox">✓</div>
+                        <h3>HERE Technologies - Director</h3>
+                        <p class="exp-period">May 2005 - Aug 2023</p>
+                        <ul class="exp-highlights">
+                            <li>18-year progression to Director</li>
+                            <li>85+ engineers globally</li>
+                            <li>Autonomous driving datasets</li>
+                            <li>50% cost reduction via cloud migration</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="skills-selector">
+                    <h3>Key Skills to Highlight</h3>
+                    <div class="skill-tags">
+                        <label class="skill-tag">
+                            <input type="checkbox" checked> Agentic AI
+                        </label>
+                        <label class="skill-tag">
+                            <input type="checkbox" checked> LLM Platforms
+                        </label>
+                        <label class="skill-tag">
+                            <input type="checkbox" checked> Engineering Leadership
+                        </label>
+                        <label class="skill-tag">
+                            <input type="checkbox" checked> Cloud Architecture
+                        </label>
+                        <label class="skill-tag">
+                            <input type="checkbox"> Autonomous Systems
+                        </label>
+                        <label class="skill-tag">
+                            <input type="checkbox"> B2B SaaS
+                        </label>
+                        <label class="skill-tag">
+                            <input type="checkbox"> DevOps & MLOps
+                        </label>
+                        <label class="skill-tag">
+                            <input type="checkbox"> Cost Optimization
+                        </label>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-secondary" onclick="resumeGenerator.previousStep()">← Back</button>
+                    <button class="btn btn-primary" onclick="resumeGenerator.nextStep()">Next Step →</button>
+                </div>
+            </div>
+
+            <!-- Step 3: Customization -->
+            <div class="form-section" id="step3">
+                <h2>Resume Customization</h2>
+                <p class="section-description">Fine-tune the resume format and content preferences</p>
+
+                <div class="customization-options">
+                    <div class="form-group">
+                        <label for="resumeLength">Resume Length</label>
+                        <select id="resumeLength">
+                            <option value="1">1 Page (Concise)</option>
+                            <option value="2" selected>2 Pages (Detailed)</option>
+                            <option value="3">3+ Pages (Comprehensive)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tone">Writing Tone</label>
+                        <select id="tone">
+                            <option value="executive" selected>Executive & Strategic</option>
+                            <option value="technical">Technical & Detailed</option>
+                            <option value="balanced">Balanced Approach</option>
+                            <option value="innovative">Innovation-Focused</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="format">Resume Format</label>
+                        <select id="format">
+                            <option value="modern" selected>Modern ATS-Friendly</option>
+                            <option value="executive">Executive Format</option>
+                            <option value="technical">Technical Format</option>
+                            <option value="creative">Creative Design</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="emphasis">Primary Emphasis</label>
+                        <select id="emphasis">
+                            <option value="leadership" selected>Leadership & Strategy</option>
+                            <option value="technical">Technical Excellence</option>
+                            <option value="innovation">Innovation & Transformation</option>
+                            <option value="results">Business Results & ROI</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="additionalNotes">Additional Instructions (Optional)</label>
+                        <textarea id="additionalNotes" rows="4"
+                            placeholder="Any specific requirements or areas to emphasize..."></textarea>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-secondary" onclick="resumeGenerator.previousStep()">← Back</button>
+                    <button class="btn btn-primary" onclick="resumeGenerator.nextStep()">Next Step →</button>
+                </div>
+            </div>
+
+            <!-- Step 4: Generate -->
+            <div class="form-section" id="step4">
+                <h2>Generate AI Resume</h2>
+                <p class="section-description">Review your selections and generate your customized resume</p>
+
+                <div class="summary-card">
+                    <h3>Summary of Your Selections</h3>
+                    <div id="summaryContent">
+                        <!-- Summary will be populated dynamically -->
+                    </div>
+                </div>
+
+                <div class="ai-status" id="aiStatus">
+                    <div class="status-icon">🤖</div>
+                    <p>Ready to generate your AI-powered resume</p>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-secondary" onclick="resumeGenerator.previousStep()">← Back</button>
+                    <button class="btn btn-primary btn-generate" onclick="resumeGenerator.generateResume()">
+                        <span class="btn-text">Generate Resume</span>
+                        <span class="loading-spinner" style="display: none;">⟳</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Generated Resume Display -->
+            <div class="form-section" id="resumeOutput" style="display: none;">
+                <div class="output-header">
+                    <h2>Your AI-Generated Resume</h2>
+                    <div class="output-actions">
+                        <button class="btn btn-secondary" onclick="resumeGenerator.editResume()">✏️ Edit</button>
+                        <button class="btn btn-primary" onclick="resumeGenerator.downloadResume('pdf', this)">📥
+                            Download PDF</button>
+                        <button class="btn btn-secondary" onclick="resumeGenerator.downloadResume('docx', this)">📄
+                            Download DOCX</button>
+                    </div>
+                </div>
+
+                <div class="resume-preview" id="resumePreview">
+                    <!-- Generated resume will appear here -->
+                </div>
+
+                <div class="regenerate-section">
+                    <p>Not quite right? You can:</p>
+                    <div class="button-group">
+                        <button class="btn btn-secondary" onclick="resumeGenerator.regenerate()">🔄 Regenerate</button>
+                        <button class="btn btn-secondary" onclick="resumeGenerator.startOver()">🆕 Start Over</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="ai-animation">🤖</div>
+            <h3>AI is crafting your resume...</h3>
+            <p id="loadingMessage">Analyzing job requirements...</p>
+            <div class="progress-loader">
+                <div class="progress-loader-fill"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add jsPDF and html2canvas libraries for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <script src="resume-generator.js"></script>
+    <script src="resume-ai-engine.js"></script>
+</body>
+
+</html>
