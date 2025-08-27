@@ -8,6 +8,74 @@
     <meta name="description"
         content="Interactive AI assistant for exploring Prasad Kavuri's experience in AI/ML Engineering, Agentic AI, and technology leadership">
 
+    <!-- Google Analytics 4 - Enhanced Implementation -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-38HPXDL9CK"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        // Enhanced configuration
+        gtag('config', 'G-38HPXDL9CK', {
+            page_path: window.location.pathname,
+            page_title: document.title,
+            send_page_view: true
+            // Remove debug_mode in production
+        });
+
+        // Log successful initialization
+        console.log('GA4 initialized for:', window.location.pathname);
+    </script>
+
+    <!-- Enhanced Event Tracking for Chat Assistant -->
+    <script>
+        // Track chat interactions
+        function trackChatEvent(eventName, eventData) {
+            if (typeof gtag !== 'undefined') {
+                gtag('event', eventName, eventData);
+            }
+        }
+
+        // Track device and performance
+        window.addEventListener('load', function () {
+            const deviceType = window.innerWidth < 768 ? 'mobile' :
+                window.innerWidth < 1024 ? 'tablet' : 'desktop';
+
+            trackChatEvent('assistant_loaded', {
+                device_type: deviceType,
+                viewport_width: window.innerWidth,
+                viewport_height: window.innerHeight,
+                page_load_time: performance.timing.loadEventEnd - performance.timing.navigationStart
+            });
+        });
+
+        // Track chat session duration
+        let chatStartTime = Date.now();
+        let messageCount = 0;
+
+        window.addEventListener('beforeunload', function () {
+            const sessionDuration = Math.round((Date.now() - chatStartTime) / 1000);
+
+            trackChatEvent('chat_session_end', {
+                session_duration_seconds: sessionDuration,
+                messages_sent: messageCount,
+                average_messages_per_minute: messageCount > 0 ? (messageCount / (sessionDuration / 60)).toFixed(2) : 0
+            });
+        });
+
+        // Mobile responsiveness check
+        function checkMobileResponsiveness() {
+            const tests = {
+                viewport_meta: !!document.querySelector('meta[name="viewport"]'),
+                touch_friendly: true,
+                responsive_width: window.innerWidth <= 768 ? document.body.scrollWidth <= window.innerWidth : true
+            };
+
+            console.log('📱 Mobile Readiness:', tests);
+            return tests;
+        }
+    </script>
+
     <style>
         * {
             margin: 0;
@@ -22,6 +90,7 @@
             display: flex;
             flex-direction: column;
             color: #2d3748;
+            font-size: 16px;
         }
 
         /* Header */
@@ -45,6 +114,7 @@
             gap: 15px;
             text-decoration: none;
             color: #2d3748;
+            min-height: 48px;
         }
 
         .logo-icon {
@@ -79,6 +149,10 @@
             color: #4a5568;
             font-weight: 500;
             transition: color 0.3s;
+            padding: 10px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
         }
 
         .nav-link:hover {
@@ -292,7 +366,7 @@
         }
 
         .quick-action {
-            padding: 8px 16px;
+            padding: 10px 16px;
             background: #f8fafc;
             border: 1px solid #e2e8f0;
             border-radius: 20px;
@@ -300,6 +374,9 @@
             transition: all 0.3s;
             font-size: 0.9rem;
             color: #4a5568;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
         }
 
         .quick-action:hover {
@@ -330,6 +407,7 @@
             font-size: 1rem;
             transition: border-color 0.3s;
             font-family: inherit;
+            min-height: 48px;
         }
 
         .chat-input:focus {
@@ -366,34 +444,129 @@
             fill: white;
         }
 
-        /* Mobile Responsive */
+        /* Enhanced Mobile Responsive */
         @media (max-width: 768px) {
+            body {
+                font-size: 14px;
+            }
+
             .header-content {
                 flex-direction: column;
-                gap: 20px;
+                gap: 15px;
                 text-align: center;
             }
 
             .nav-links {
                 flex-wrap: wrap;
                 justify-content: center;
+                gap: 15px;
+            }
+
+            .nav-link {
+                padding: 8px 12px;
             }
 
             .chat-container {
-                height: 600px;
+                height: calc(100vh - 120px);
                 border-radius: 0;
+                max-height: none;
             }
 
-            .message-bubble {
-                max-width: 90%;
+            .chat-header {
+                padding: 20px;
             }
 
-            .quick-actions {
-                padding: 10px 20px;
+            .chat-header-info h2 {
+                font-size: 1.1rem;
             }
 
             .chat-messages {
                 padding: 20px;
+            }
+
+            .message-bubble {
+                max-width: 90%;
+                font-size: 0.95rem;
+            }
+
+            .quick-actions {
+                padding: 10px 20px;
+                gap: 8px;
+            }
+
+            .quick-action {
+                padding: 8px 12px;
+                font-size: 0.85rem;
+            }
+
+            .chat-input {
+                font-size: 0.95rem;
+                padding: 12px 18px;
+            }
+
+            .send-button {
+                width: 45px;
+                height: 45px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: 15px;
+            }
+
+            .logo-text h1 {
+                font-size: 1.2rem;
+            }
+
+            .logo-text p {
+                font-size: 0.8rem;
+            }
+
+            .chat-container {
+                height: calc(100vh - 100px);
+            }
+
+            .chat-header {
+                padding: 15px;
+            }
+
+            .bot-avatar {
+                width: 40px;
+                height: 40px;
+            }
+
+            .chat-messages {
+                padding: 15px;
+            }
+
+            .message-avatar {
+                width: 30px;
+                height: 30px;
+            }
+
+            .quick-actions {
+                padding: 8px 15px;
+            }
+
+            .quick-action {
+                width: calc(50% - 4px);
+                justify-content: center;
+            }
+
+            .chat-input-container {
+                padding: 15px;
+            }
+        }
+
+        /* Ensure touch targets are large enough on mobile */
+        @media (pointer: coarse) {
+
+            button,
+            a,
+            .quick-action {
+                min-height: 44px;
+                min-width: 44px;
             }
         }
     </style>
@@ -411,9 +584,12 @@
                 </div>
             </a>
             <nav class="nav-links">
-                <a href="index.html" class="nav-link">Home</a>
-                <a href="resume-generator.html" class="nav-link">Resume Generator</a>
-                <a href="https://www.linkedin.com/in/pkavuri/" class="nav-link" target="_blank">LinkedIn</a>
+                <a href="index.html" class="nav-link"
+                    onclick="trackChatEvent('nav_click', {destination: 'home'})">Home</a>
+                <a href="resume-generator.html" class="nav-link"
+                    onclick="trackChatEvent('nav_click', {destination: 'resume_generator'})">Resume Generator</a>
+                <a href="https://www.linkedin.com/in/pkavuri/" class="nav-link" target="_blank"
+                    onclick="trackChatEvent('nav_click', {destination: 'linkedin'})">LinkedIn</a>
             </nav>
         </div>
     </header>
@@ -516,7 +692,7 @@ Key responsibilities include:
 • Achieved 40% cost savings through multi-model LLM orchestration
 • Built and scaled team to 200+ engineers
 
-📍 **At Ola (2023-2025)**:
+🗺 **At Ola (2023-2025)**:
 • Launched Ola Maps B2B platform acquiring 13,000+ customers
 • Generated $10M+ in new recurring revenue
 • Reduced infrastructure costs by 70%
@@ -680,12 +856,20 @@ Here are some topics I can help you with:
 Please feel free to ask about any of these areas!`;
         }
 
-        // Send message function
+        // Send message function with analytics
         function sendMessage() {
             const input = document.getElementById('chatInput');
             const message = input.value.trim();
 
             if (message === '') return;
+
+            // Track message sent
+            messageCount++;
+            trackChatEvent('message_sent', {
+                message_length: message.length,
+                message_number: messageCount,
+                message_type: 'user_typed'
+            });
 
             // Add user message
             addMessage(message, 'user');
@@ -701,7 +885,24 @@ Please feel free to ask about any of these areas!`;
                 hideTypingIndicator();
                 const response = findBestResponse(message);
                 addMessage(response, 'bot');
+
+                // Track bot response
+                trackChatEvent('bot_response', {
+                    query_type: detectQueryType(message),
+                    response_length: response.length
+                });
             }, 1000 + Math.random() * 1000);
+        }
+
+        // Detect query type for analytics
+        function detectQueryType(message) {
+            const lower = message.toLowerCase();
+            if (lower.includes('current') || lower.includes('krutrim')) return 'current_role';
+            if (lower.includes('achievement') || lower.includes('success')) return 'achievements';
+            if (lower.includes('ai') || lower.includes('ml') || lower.includes('technical')) return 'technical';
+            if (lower.includes('lead') || lower.includes('team')) return 'leadership';
+            if (lower.includes('contact') || lower.includes('hire')) return 'contact';
+            return 'general';
         }
 
         // Add message to chat
@@ -723,8 +924,14 @@ Please feel free to ask about any of these areas!`;
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
 
-        // Quick message sender
+        // Quick message sender with tracking
         function sendQuickMessage(message) {
+            // Track quick action click
+            trackChatEvent('quick_action_click', {
+                action_text: message,
+                action_type: 'predefined_query'
+            });
+
             document.getElementById('chatInput').value = message;
             sendMessage();
         }
@@ -768,6 +975,15 @@ Please feel free to ask about any of these areas!`;
         // Initialize
         document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('chatInput').focus();
+
+            // Track assistant ready
+            trackChatEvent('assistant_ready', {
+                page_title: document.title,
+                timestamp: new Date().toISOString()
+            });
+
+            // Check mobile responsiveness
+            checkMobileResponsiveness();
         });
     </script>
 </body>

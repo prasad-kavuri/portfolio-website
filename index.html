@@ -10,12 +10,139 @@
     <meta name="keywords"
         content="AI Executive, Agentic AI, LLM Ops, AI Strategy, Digital Transformation, Engineering Leadership, Generative AI, AI Governance">
 
-    <!-- Stylesheets -->
-    <link rel="stylesheet" href="chatbot.css">
-
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon"
         href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
+
+    <!-- Google Analytics 4 - Enhanced Implementation -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-38HPXDL9CK"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        // Enhanced configuration
+        gtag('config', 'G-38HPXDL9CK', {
+            page_path: window.location.pathname,
+            page_title: document.title,
+            send_page_view: true
+            // Remove debug_mode in production
+        });
+
+        // Log successful initialization
+        console.log('GA4 initialized for:', window.location.pathname);
+    </script>
+
+    <!-- Enhanced Event Tracking -->
+    <script>
+        // Track device type and performance
+        window.addEventListener('load', function () {
+            const deviceType = window.innerWidth < 768 ? 'mobile' :
+                window.innerWidth < 1024 ? 'tablet' : 'desktop';
+
+            // Track page performance
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'page_performance', {
+                    device_type: deviceType,
+                    viewport_width: window.innerWidth,
+                    viewport_height: window.innerHeight,
+                    page_load_time: performance.timing.loadEventEnd - performance.timing.navigationStart,
+                    page_url: window.location.href
+                });
+            }
+        });
+
+        // Enhanced click tracking
+        document.addEventListener('DOMContentLoaded', function () {
+            // Track AI tool clicks
+            document.querySelectorAll('.ai-tool-btn').forEach(button => {
+                button.addEventListener('click', function (e) {
+                    const toolCard = this.closest('.ai-tool-card');
+                    const toolName = toolCard ? toolCard.dataset.tool : 'unknown';
+
+                    if (typeof gtag !== 'undefined') {
+                        gtag('event', 'ai_tool_click', {
+                            tool_name: toolName,
+                            tool_title: toolCard ? toolCard.querySelector('h3').textContent : 'unknown',
+                            destination_url: this.href
+                        });
+                    }
+                });
+            });
+
+            // Track skill tag interactions
+            document.querySelectorAll('.skill-tag').forEach(tag => {
+                tag.addEventListener('click', function () {
+                    if (typeof gtag !== 'undefined') {
+                        gtag('event', 'skill_tag_click', {
+                            skill_name: this.textContent.trim(),
+                            skill_category: this.closest('.skill-category')?.querySelector('h3')?.textContent
+                        });
+                    }
+                });
+            });
+
+            // Track contact button clicks
+            document.querySelectorAll('.contact-btn').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const contactType = this.textContent.includes('LinkedIn') ? 'linkedin' : 'email';
+
+                    if (typeof gtag !== 'undefined') {
+                        gtag('event', 'contact_click', {
+                            contact_method: contactType,
+                            button_text: this.textContent.trim()
+                        });
+                    }
+                });
+            });
+
+            // Track scroll depth
+            let maxScroll = 0;
+            window.addEventListener('scroll', function () {
+                const scrollPercent = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+
+                if (scrollPercent > maxScroll) {
+                    maxScroll = scrollPercent;
+
+                    // Track milestone scroll depths
+                    if (maxScroll >= 25 && maxScroll < 26) {
+                        gtag('event', 'scroll_depth', { depth: '25%' });
+                    } else if (maxScroll >= 50 && maxScroll < 51) {
+                        gtag('event', 'scroll_depth', { depth: '50%' });
+                    } else if (maxScroll >= 75 && maxScroll < 76) {
+                        gtag('event', 'scroll_depth', { depth: '75%' });
+                    } else if (maxScroll >= 90) {
+                        gtag('event', 'scroll_depth', { depth: '90%' });
+                    }
+                }
+            });
+
+            // Track time on page when leaving
+            const startTime = Date.now();
+            window.addEventListener('beforeunload', function () {
+                const timeOnPage = Math.round((Date.now() - startTime) / 1000);
+
+                if (typeof gtag !== 'undefined' && timeOnPage > 0) {
+                    gtag('event', 'engagement_time', {
+                        time_seconds: timeOnPage,
+                        page_title: document.title
+                    });
+                }
+            });
+        });
+
+        // Mobile responsiveness check
+        function checkMobileResponsiveness() {
+            const tests = {
+                viewport_meta: !!document.querySelector('meta[name="viewport"]'),
+                touch_friendly: true,
+                responsive_width: window.innerWidth <= 768 ? document.body.scrollWidth <= window.innerWidth : true
+            };
+
+            console.log('📱 Mobile Readiness:', tests);
+            return tests;
+        }
+    </script>
 
     <style>
         * {
@@ -243,6 +370,8 @@
             transition: all 0.3s;
             position: relative;
             z-index: 1;
+            min-height: 44px;
+            min-width: 44px;
         }
 
         .ai-tool-btn:hover {
@@ -328,6 +457,10 @@
             font-weight: 500;
             border: 1px solid #e2e8f0;
             transition: all 0.2s ease;
+            cursor: pointer;
+            min-height: 44px;
+            display: inline-flex;
+            align-items: center;
         }
 
         .skill-tag:hover {
@@ -472,6 +605,7 @@
             font-size: 1.1rem;
             transition: all 0.3s ease;
             border: 2px solid #4299e1;
+            min-height: 48px;
         }
 
         .contact-btn:hover {
@@ -498,7 +632,7 @@
             fill: currentColor;
         }
 
-        /* Responsive Design */
+        /* Enhanced Mobile Responsive Design */
         @media (max-width: 768px) {
             .container {
                 padding: 20px 15px;
@@ -506,7 +640,7 @@
 
             .header-card,
             .card {
-                padding: 40px 30px;
+                padding: 30px 20px;
             }
 
             .profile-header {
@@ -515,12 +649,21 @@
                 gap: 30px;
             }
 
+            .profile-photo {
+                width: 120px;
+                height: 120px;
+            }
+
             .profile-info h1 {
-                font-size: 2.4rem;
+                font-size: 2rem;
+            }
+
+            .profile-info .title {
+                font-size: 1.2rem;
             }
 
             .section-title {
-                font-size: 2rem;
+                font-size: 1.8rem;
             }
 
             .skills-grid,
@@ -533,6 +676,10 @@
                 grid-template-columns: repeat(2, 1fr);
             }
 
+            .stat-number {
+                font-size: 1.8rem;
+            }
+
             .exp-header {
                 flex-direction: column;
                 gap: 5px;
@@ -540,7 +687,20 @@
 
             .contact-links {
                 flex-direction: column;
-                align-items: center;
+                align-items: stretch;
+            }
+
+            .contact-btn {
+                justify-content: center;
+                width: 100%;
+            }
+
+            /* Touch-friendly sizing */
+            .skill-tag,
+            .ai-tool-btn,
+            .contact-btn {
+                min-height: 48px;
+                padding: 12px 20px;
             }
         }
 
@@ -548,20 +708,62 @@
 
             .header-card,
             .card {
-                padding: 30px 20px;
+                padding: 25px 15px;
+                border-radius: 12px;
             }
 
             .profile-info h1 {
-                font-size: 2rem;
+                font-size: 1.75rem;
             }
 
             .stats-row {
                 grid-template-columns: 1fr;
+                gap: 15px;
             }
 
             .ai-tool-card,
             .coming-soon-card {
                 padding: 25px;
+            }
+
+            .executive-summary {
+                font-size: 1rem;
+            }
+
+            .achievement-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .achievement-item {
+                padding: 20px;
+            }
+
+            /* Ensure touch targets are large enough */
+            button,
+            a,
+            .skill-tag {
+                min-height: 44px;
+                min-width: 44px;
+            }
+        }
+
+        /* Ensure images are responsive */
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* Improve table responsiveness */
+        table {
+            width: 100%;
+            overflow-x: auto;
+            display: block;
+        }
+
+        /* Print styles */
+        @media print {
+            .card {
+                break-inside: avoid;
             }
         }
     </style>
@@ -825,7 +1027,6 @@
                 </div>
             </div>
         </div>
-        <!-- Replace the incomplete contact section in your index.html with this complete version -->
 
         <!-- Contact Card -->
         <div class="card">
@@ -853,17 +1054,7 @@
                 </p>
             </div>
         </div>
+    </div>
+</body>
 
-        <!-- Add this CSS to your existing styles if not already present -->
-        <style>
-            .contact-btn.secondary {
-                background: white;
-                color: #4299e1;
-                border: 2px solid #4299e1;
-            }
-
-            .contact-btn.secondary:hover {
-                background: #4299e1;
-                color: white;
-            }
-        </style>
+</html>
