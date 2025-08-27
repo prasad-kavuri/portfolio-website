@@ -624,11 +624,20 @@
                     </a>
                 </div>
 
+                <div class="ai-tool-card" data-tool="portfolio-assistant">
+                    <span class="ai-tool-icon">🤖</span>
+                    <h3>Agentic AI Portfolio Assistant</h3>
+                    <p>Intelligent agent that helps explore my experience through dynamic conversations, personalized
+                        insights, and smart navigation.</p>
+                    <a href="portfolio-assistant.html" class="ai-tool-btn">
+                        Launch AI Assistant →
+                    </a>
+                </div>
+
                 <div class="coming-soon-card">
                     <span class="coming-soon-icon">🔮</span>
                     <h3>More AI Tools Coming Soon</h3>
-                    <p>Agentic AI Portfolio Assistant, Voice AI Integration, Technical Deep-Dive AI, and more innovative
-                        tools...</p>
+                    <p>Voice AI Integration, Technical Deep-Dive AI, and more innovative tools...</p>
                 </div>
             </div>
         </div>
@@ -816,6 +825,7 @@
                 </div>
             </div>
         </div>
+        <!-- Replace the incomplete contact section in your index.html with this complete version -->
 
         <!-- Contact Card -->
         <div class="card">
@@ -828,152 +838,32 @@
                     </svg>
                     LinkedIn Profile
                 </a>
-
-                <a href="mailto:vbkpkavuri@gmail.com" class="contact-btn secondary">
+                <a href="mailto:prasad.kavuri@example.com" class="contact-btn secondary">
                     <svg class="contact-icon" viewBox="0 0 24 24">
                         <path
-                            d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.89 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
+                            d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
                     </svg>
-                    Email Contact
+                    Send Email
                 </a>
             </div>
-        </div>
-    </div>
-
-    <!-- Claude AI Chatbot -->
-    <button class="chat-toggle" id="chatToggle">🤖</button>
-
-    <div class="chatbot-container" id="chatbotContainer">
-        <div class="chatbot-header">
-            <div class="chatbot-title">
-                <div class="claude-icon">C</div>
-                Ask Claude about Prasad
-            </div>
-            <button class="close-btn" id="closeChat">×</button>
-        </div>
-
-        <div class="chat-messages" id="chatMessages">
-            <div class="message claude intro-message">
-                👋 Hi! I'm Claude, Prasad's AI assistant. I can help you learn about his AI Engineering leadership, his
-                work at Krutrim, Ola, and HERE Technologies, or his technical expertise in LLMs and Agentic AI
-                platforms.
-            </div>
-            <div class="quick-actions">
-                <button class="quick-action" data-message="Tell me about Kruti.ai platform">Kruti.ai</button>
-                <button class="quick-action" data-message="What is his experience at Ola?">Ola Experience</button>
-                <button class="quick-action" data-message="His AI leadership achievements?">AI Leadership</button>
-                <button class="quick-action" data-message="How to contact him?">Contact</button>
+            <div style="text-align: center; margin-top: 30px; color: #718096;">
+                <p style="font-size: 1.1rem; line-height: 1.8;">
+                    Open to executive AI/ML leadership opportunities, advisory roles,<br>
+                    and strategic partnerships in AI transformation initiatives.
+                </p>
             </div>
         </div>
 
-        <div class="typing-indicator" id="typingIndicator">
-            <div class="typing-dots">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-        </div>
-
-        <div class="chat-input-container">
-            <div class="chat-input-wrapper">
-                <textarea class="chat-input" id="chatInput"
-                    placeholder="Ask me anything about Prasad's AI Engineering background..." rows="1"
-                    maxlength="500"></textarea>
-                <button class="send-btn" id="sendBtn" disabled>
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M2,21L23,12L2,3V10L17,12L2,14V21Z" />
-                    </svg>
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // Initialize event listeners when DOM loads
-        document.addEventListener('DOMContentLoaded', function () {
-            console.log('🎯 Initializing main portfolio page...');
-
-            // AI Tool Card Click Handlers
-            const aiToolCards = document.querySelectorAll('[data-tool]');
-            aiToolCards.forEach(card => {
-                card.addEventListener('click', function (e) {
-                    if (!e.target.matches('a, a *')) {  // Don't trigger if clicking the link itself
-                        const tool = this.getAttribute('data-tool');
-                        if (tool === 'resume-generator') {
-                            window.location.href = 'resume-generator.html';
-                        }
-                    }
-                });
-
-                // Add keyboard accessibility
-                card.addEventListener('keypress', function (e) {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        this.click();
-                    }
-                });
-
-                card.setAttribute('tabindex', '0');
-                card.setAttribute('role', 'button');
-            });
-
-            console.log('✅ AI tool cards initialized:', aiToolCards.length);
-
-            // Chatbot Quick Actions (use data attributes instead of onclick)
-            const quickActions = document.querySelectorAll('.quick-action');
-            quickActions.forEach(button => {
-                button.addEventListener('click', function () {
-                    const message = this.getAttribute('data-message');
-                    if (message && typeof sendQuickMessage === 'function') {
-                        sendQuickMessage(message);
-                    } else if (message) {
-                        console.log('Quick message:', message);
-                        // Fallback: set the message in chat input if sendQuickMessage isn't available
-                        const chatInput = document.getElementById('chatInput');
-                        if (chatInput) {
-                            chatInput.value = message;
-                            chatInput.focus();
-                        }
-                    }
-                });
-            });
-
-            if (quickActions.length > 0) {
-                console.log('✅ Chatbot quick actions initialized:', quickActions.length);
+        <!-- Add this CSS to your existing styles if not already present -->
+        <style>
+            .contact-btn.secondary {
+                background: white;
+                color: #4299e1;
+                border: 2px solid #4299e1;
             }
 
-            // Smooth scrolling for anchor links
-            const anchorLinks = document.querySelectorAll('a[href^="#"]');
-            anchorLinks.forEach(link => {
-                link.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    const target = document.querySelector(this.getAttribute('href'));
-                    if (target) {
-                        target.scrollIntoView({ behavior: 'smooth' });
-                    }
-                });
-            });
-
-            console.log('🎉 Main portfolio page initialization complete!');
-        });
-
-        // Global function for quick messages (if needed by chatbot)
-        function sendQuickMessage(message) {
-            const chatInput = document.getElementById('chatInput');
-            const sendBtn = document.getElementById('sendBtn');
-            if (chatInput && sendBtn) {
-                chatInput.value = message;
-                chatInput.dispatchEvent(new Event('input'));
-                sendBtn.click();
+            .contact-btn.secondary:hover {
+                background: #4299e1;
+                color: white;
             }
-        }
-
-        // Make function globally available
-        window.sendQuickMessage = sendQuickMessage;
-
-        console.log('🤖 Main portfolio script loaded successfully');
-    </script>
-    <script src="chatbot.js"></script>
-</body>
-
-</html>
+        </style>
