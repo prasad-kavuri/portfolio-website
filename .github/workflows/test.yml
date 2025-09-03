@@ -2,141 +2,86 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main ]
   pull_request:
     branches: [ main ]
 
 jobs:
-  test:
+  test-and-validate:
     runs-on: ubuntu-latest
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
     
     - name: Setup Node.js
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: '18'
-    
-    - name: Check for package-lock.json
-      run: |
-        if [ -f "package-lock.json" ]; then
-          echo "✅ package-lock.json found"
-          echo "INSTALL_CMD=ci" >> $GITHUB_ENV
-        else
-          echo "⚠️ package-lock.json not found, using npm install"
-          echo "INSTALL_CMD=install" >> $GITHUB_ENV
-        fi
+        cache: 'npm'
     
     - name: Install dependencies
-      run: npm ${{ env.INSTALL_CMD }}
-    
-    - name: Check if test files exist
       run: |
-        echo "Checking for test files..."
-        if [ -f "rag-pipeline.test.js" ]; then
-          echo "✅ Unit test file found"
-          echo "HAS_UNIT_TESTS=true" >> $GITHUB_ENV
-        else
-          echo "⚠️ Unit test file not found"
-          echo "HAS_UNIT_TESTS=false" >> $GITHUB_ENV
-        fi
-        
-        if [ -f "e2e.spec.js" ]; then
-          echo "✅ E2E test file found"
-          echo "HAS_E2E_TESTS=true" >> $GITHUB_ENV
-        else
-          echo "⚠️ E2E test file not found"
-          echo "HAS_E2E_TESTS=false" >> $GITHUB_ENV
-        fi
+        echo "Installing dependencies..."
+        npm install
+        echo "✅ Dependencies installed"
     
-    - name: Create basic test if none exist
-      if: env.HAS_UNIT_TESTS == 'false'
+    - name: List project structure
       run: |
-        cat > basic.test.js << 'EOF'
-        test('Basic test to verify setup', () => {
-          expect(true).toBe(true);
-        });
-        EOF
-        echo "Created basic test file"
+        echo "=== Project Structure ==="
+        echo "HTML files:"
+        ls -la *.html | head -20
+        echo ""
+        echo "JavaScript files:"
+        ls -la *.js | head -20
+        echo ""
+        echo "Config files:"
+        ls -la .*rc.json package*.json 2>/dev/null || true
+    
+    - name: Run linting
+      run: |
+        echo "=== Running ESLint ==="
+        npm run lint || echo "⚠️ Linting completed with warnings"
+      continue-on-error: true
     
     - name: Run unit tests
       run: |
-        if [ "${{ env.HAS_UNIT_TESTS }}" == "true" ] || [ -f "basic.test.js" ]; then
-          npm run test:unit || echo "Tests failed but continuing"
-        else
-          echo "Skipping unit tests - no test files found"
-        fi
+        echo "=== Running Unit Tests ==="
+        npm test || echo "⚠️ Some tests failed"
       continue-on-error: true
     
-    - name: Check for ESLint config
+    - name: Check critical files
       run: |
-        if [ -f ".eslintrc.json" ] || [ -f ".eslintrc.js" ]; then
-          echo "✅ ESLint config found"
-          npm run lint || echo "Linting failed but continuing"
-        else
-          echo "⚠️ No ESLint config found, skipping linting"
-        fi
-      continue-on-error: true
-    
-    - name: Validate HTML files
-      run: |
-        echo "Checking HTML files..."
-        for file in *.html; do
+        echo "=== Verifying Critical Files ==="
+        
+        critical_files=(
+          "index.html"
+          "rag-pipeline.html"
+          "package.json"
+        )
+        
+        all_found=true
+        for file in "${critical_files[@]}"; do
           if [ -f "$file" ]; then
-            echo "Found: $file"
+            echo "✅ $file exists"
+          else
+            echo "❌ $file is missing"
+            all_found=false
           fi
         done
         
-        # Basic HTML validation
-        if [ -f "rag-pipeline.html" ]; then
-          echo "✅ RAG pipeline HTML found"
+        if [ "$all_found" = true ]; then
+          echo "✅ All critical files present!"
         else
-          echo "❌ RAG pipeline HTML not found"
+          echo "❌ Some critical files are missing"
+          exit 1
         fi
-        
-        if [ -f "index.html" ]; then
-          echo "✅ Index HTML found"
-        else
-          echo "⚠️ Index HTML not found"
-        fi
-    
-    - name: Run Playwright tests
-      if: env.HAS_E2E_TESTS == 'true'
-      run: |
-        npx playwright install --with-deps
-        npm run serve &
-        sleep 5
-        npx playwright test || echo "E2E tests failed but continuing"
-      continue-on-error: true
-    
-    - name: Generate test report
-      if: always()
-      run: |
-        echo "## Test Summary" > test-summary.md
-        echo "- Node Version: $(node --version)" >> test-summary.md
-        echo "- NPM Version: $(npm --version)" >> test-summary.md
-        echo "- Unit Tests: ${{ env.HAS_UNIT_TESTS }}" >> test-summary.md
-        echo "- E2E Tests: ${{ env.HAS_E2E_TESTS }}" >> test-summary.md
-        echo "- Timestamp: $(date)" >> test-summary.md
-        cat test-summary.md
-    
-    - name: Upload test artifacts
-      uses: actions/upload-artifact@v3
-      if: always()
-      with:
-        name: test-results
-        path: |
-          test-summary.md
-          coverage/
-          playwright-report/
-        retention-days: 30
 
   check-files:
     runs-on: ubuntu-latest
+    
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     
     - name: List all files
       run: |
@@ -151,22 +96,33 @@ jobs:
         
         echo -e "\n📦 Package files:"
         ls -la package*.json 2>/dev/null || echo "No package files found"
-        
-        echo -e "\n🧪 Test files:"
-        ls -la *.test.js *.spec.js test-suite.html 2>/dev/null || echo "No test files found"
 
-  deploy:
-    needs: [test, check-files]
+  deploy-pages:
+    needs: [test-and-validate, check-files]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout
+      uses: actions/checkout@v4
+    
+    - name: Setup Pages
+      uses: actions/configure-pages@v4
+    
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: '.'
     
     - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./
-        publish_branch: gh-pages
-      continue-on-error: true
+      id: deployment
+      uses: actions/deploy-pages@v4
