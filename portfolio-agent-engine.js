@@ -1,4 +1,6 @@
 // Agentic AI Engine - Intelligent Query Processing
+/* eslint no-unused-vars: ["warn", { "argsIgnorePattern": "^_" }] */
+
 class AgentEngine {
     constructor() {
         this.knowledgeBase = {

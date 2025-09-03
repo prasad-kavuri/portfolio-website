@@ -857,25 +857,27 @@ Please feel free to ask about any of these areas!`;
         }
 
         // Send message function with analytics
-        function sendMessage() {
+        function sendMessage(rawMessage) {
             const input = document.getElementById('chatInput');
-            const message = input.value.trim();
+            const candidate = rawMessage != null ? String(rawMessage) : (input?.value ?? '');
+            const message = candidate.trim();
 
-            if (message === '') return;
+            // ✅ Reject empty/whitespace-only messages (matches unit test expectation)
+            if (!message) return false;
 
             // Track message sent
             messageCount++;
             trackChatEvent('message_sent', {
                 message_length: message.length,
                 message_number: messageCount,
-                message_type: 'user_typed'
+                message_type: rawMessage != null ? 'user_programmatic' : 'user_typed'
             });
 
             // Add user message
             addMessage(message, 'user');
 
-            // Clear input
-            input.value = '';
+            // Clear input if present
+            if (input) input.value = '';
 
             // Show typing indicator
             showTypingIndicator();
@@ -892,99 +894,105 @@ Please feel free to ask about any of these areas!`;
                     response_length: response.length
                 });
             }, 1000 + Math.random() * 1000);
+
+            return true;
         }
 
-        // Detect query type for analytics
-        function detectQueryType(message) {
-            const lower = message.toLowerCase();
-            if (lower.includes('current') || lower.includes('krutrim')) return 'current_role';
-            if (lower.includes('achievement') || lower.includes('success')) return 'achievements';
-            if (lower.includes('ai') || lower.includes('ml') || lower.includes('technical')) return 'technical';
-            if (lower.includes('lead') || lower.includes('team')) return 'leadership';
-            if (lower.includes('contact') || lower.includes('hire')) return 'contact';
-            return 'general';
-        }
+        // (Optional) expose globally if you call it from inline HTML
+        if (typeof window !== 'undefined') window.sendMessage = sendMessage;
+    </script>
 
-        // Add message to chat
-        function addMessage(text, sender) {
-            const messagesContainer = document.getElementById('chatMessages');
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${sender}`;
+    // Detect query type for analytics
+    function detectQueryType(message) {
+    const lower = message.toLowerCase();
+    if (lower.includes('current') || lower.includes('krutrim')) return 'current_role';
+    if (lower.includes('achievement') || lower.includes('success')) return 'achievements';
+    if (lower.includes('ai') || lower.includes('ml') || lower.includes('technical')) return 'technical';
+    if (lower.includes('lead') || lower.includes('team')) return 'leadership';
+    if (lower.includes('contact') || lower.includes('hire')) return 'contact';
+    return 'general';
+    }
 
-            const avatar = sender === 'bot' ? '🤖' : '👤';
+    // Add message to chat
+    function addMessage(text, sender) {
+    const messagesContainer = document.getElementById('chatMessages');
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${sender}`;
 
-            messageDiv.innerHTML = `
-                <div class="message-avatar">${avatar}</div>
-                <div class="message-content">
-                    <div class="message-bubble">${text}</div>
-                </div>
-            `;
+    const avatar = sender === 'bot' ? '🤖' : '👤';
 
-            messagesContainer.appendChild(messageDiv);
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        }
+    messageDiv.innerHTML = `
+    <div class="message-avatar">${avatar}</div>
+    <div class="message-content">
+        <div class="message-bubble">${text}</div>
+    </div>
+    `;
 
-        // Quick message sender with tracking
-        function sendQuickMessage(message) {
-            // Track quick action click
-            trackChatEvent('quick_action_click', {
-                action_text: message,
-                action_type: 'predefined_query'
-            });
+    messagesContainer.appendChild(messageDiv);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
 
-            document.getElementById('chatInput').value = message;
-            sendMessage();
-        }
+    // Quick message sender with tracking
+    function sendQuickMessage(message) {
+    // Track quick action click
+    trackChatEvent('quick_action_click', {
+    action_text: message,
+    action_type: 'predefined_query'
+    });
 
-        // Handle enter key
-        function handleKeyPress(event) {
-            if (event.key === 'Enter') {
-                sendMessage();
-            }
-        }
+    document.getElementById('chatInput').value = message;
+    sendMessage();
+    }
 
-        // Typing indicator functions
-        function showTypingIndicator() {
-            const messagesContainer = document.getElementById('chatMessages');
-            const typingDiv = document.createElement('div');
-            typingDiv.className = 'message bot';
-            typingDiv.id = 'tempTyping';
+    // Handle enter key
+    function handleKeyPress(event) {
+    if (event.key === 'Enter') {
+    sendMessage();
+    }
+    }
 
-            typingDiv.innerHTML = `
-                <div class="message-avatar">🤖</div>
-                <div class="message-content">
-                    <div class="typing-indicator active">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </div>
-                </div>
-            `;
+    // Typing indicator functions
+    function showTypingIndicator() {
+    const messagesContainer = document.getElementById('chatMessages');
+    const typingDiv = document.createElement('div');
+    typingDiv.className = 'message bot';
+    typingDiv.id = 'tempTyping';
 
-            messagesContainer.appendChild(typingDiv);
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        }
+    typingDiv.innerHTML = `
+    <div class="message-avatar">🤖</div>
+    <div class="message-content">
+        <div class="typing-indicator active">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+    `;
 
-        function hideTypingIndicator() {
-            const tempTyping = document.getElementById('tempTyping');
-            if (tempTyping) {
-                tempTyping.remove();
-            }
-        }
+    messagesContainer.appendChild(typingDiv);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', function () {
-            document.getElementById('chatInput').focus();
+    function hideTypingIndicator() {
+    const tempTyping = document.getElementById('tempTyping');
+    if (tempTyping) {
+    tempTyping.remove();
+    }
+    }
 
-            // Track assistant ready
-            trackChatEvent('assistant_ready', {
-                page_title: document.title,
-                timestamp: new Date().toISOString()
-            });
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function () {
+    document.getElementById('chatInput').focus();
 
-            // Check mobile responsiveness
-            checkMobileResponsiveness();
-        });
+    // Track assistant ready
+    trackChatEvent('assistant_ready', {
+    page_title: document.title,
+    timestamp: new Date().toISOString()
+    });
+
+    // Check mobile responsiveness
+    checkMobileResponsiveness();
+    });
     </script>
 </body>
 

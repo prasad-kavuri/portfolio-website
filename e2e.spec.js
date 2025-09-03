@@ -5,12 +5,6 @@
 
 const { test, expect } = require('@playwright/test');
 
-// Test configuration
-test.use({
-    baseURL: 'http://localhost:8080',
-    screenshot: 'only-on-failure',
-    video: 'retain-on-failure',
-});
 
 test.describe('RAG Pipeline E2E Tests', () => {
     test.beforeEach(async ({ page }) => {

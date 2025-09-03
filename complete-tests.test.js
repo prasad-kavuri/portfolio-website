@@ -32,7 +32,7 @@ describe('Index Page', () => {
             <section class="about"></section>
             <section class="contact"></section>
         `;
-        
+
         expect(document.querySelector('.navbar')).toBeTruthy();
         expect(document.querySelector('.hero')).toBeTruthy();
         expect(document.querySelector('.projects')).toBeTruthy();
@@ -47,7 +47,7 @@ describe('Index Page', () => {
                 ${navLinks.map(link => `<a href="#${link.toLowerCase()}">${link}</a>`).join('')}
             </nav>
         `;
-        
+
         navLinks.forEach(link => {
             const element = document.querySelector(`a[href="#${link.toLowerCase()}"]`);
             expect(element).toBeTruthy();
@@ -62,13 +62,13 @@ describe('Index Page', () => {
             'Portfolio Assistant',
             'Resume Generator'
         ];
-        
+
         document.body.innerHTML = `
             <div class="projects">
                 ${projects.map(p => `<div class="project-card">${p}</div>`).join('')}
             </div>
         `;
-        
+
         const cards = document.querySelectorAll('.project-card');
         expect(cards.length).toBe(4);
     });
@@ -79,16 +79,17 @@ describe('Index Page', () => {
 // ============================================
 describe('Chatbot Component', () => {
     // Mock chatbot functions
+
     const sendMessage = (message) => {
+        const msg = (message ?? '').trim();
+        if (!msg) return false;
         const messages = document.getElementById('chatMessages');
-        if (messages) {
-            const msgDiv = document.createElement('div');
-            msgDiv.className = 'message user';
-            msgDiv.textContent = message;
-            messages.appendChild(msgDiv);
-            return true;
-        }
-        return false;
+        if (!messages) return false;
+        const msgDiv = document.createElement('div');
+        msgDiv.className = 'message user';
+        msgDiv.textContent = msg;
+        messages.appendChild(msgDiv);
+        return true;
     };
 
     const addBotResponse = (response) => {
@@ -107,7 +108,7 @@ describe('Chatbot Component', () => {
         const chatMessages = document.getElementById('chatMessages');
         const userInput = document.getElementById('userInput');
         const sendButton = document.getElementById('sendButton');
-        
+
         expect(chatMessages).toBeTruthy();
         expect(userInput).toBeTruthy();
         expect(sendButton).toBeTruthy();
@@ -116,7 +117,7 @@ describe('Chatbot Component', () => {
     test('should add user message to chat', () => {
         const result = sendMessage('Hello, bot!');
         expect(result).toBe(true);
-        
+
         const messages = document.querySelectorAll('.message.user');
         expect(messages.length).toBe(1);
         expect(messages[0].textContent).toBe('Hello, bot!');
@@ -125,7 +126,7 @@ describe('Chatbot Component', () => {
     test('should add bot response to chat', () => {
         const result = addBotResponse('Hello, human!');
         expect(result).toBe(true);
-        
+
         const messages = document.querySelectorAll('.message.bot');
         expect(messages.length).toBe(1);
         expect(messages[0].textContent).toBe('Hello, human!');
@@ -170,14 +171,14 @@ describe('Resume Generator', () => {
     test('should have resume form elements', () => {
         const form = document.getElementById('resumeForm');
         const generateBtn = document.getElementById('generateBtn');
-        
+
         expect(form).toBeTruthy();
         expect(generateBtn).toBeTruthy();
     });
 
     test('should generate resume with valid data', () => {
         const result = generateResume(mockResumeData);
-        
+
         expect(result).toBeTruthy();
         expect(result.generated).toBe(true);
         expect(result.name).toBe('John Doe');
@@ -188,7 +189,7 @@ describe('Resume Generator', () => {
     test('should reject invalid resume data', () => {
         const invalidData = { name: 'John' }; // Missing email
         const result = generateResume(invalidData);
-        
+
         expect(result).toBeNull();
     });
 
@@ -197,7 +198,7 @@ describe('Resume Generator', () => {
             const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             return re.test(email);
         };
-        
+
         expect(validateEmail('john@example.com')).toBe(true);
         expect(validateEmail('invalid-email')).toBe(false);
         expect(validateEmail('')).toBe(false);
@@ -223,7 +224,7 @@ describe('Portfolio Assistant', () => {
         if (!query || !assistantState.isActive) {
             return null;
         }
-        
+
         assistantState.currentQuery = query;
         const response = {
             query: query,
@@ -243,7 +244,7 @@ describe('Portfolio Assistant', () => {
     test('should initialize assistant elements', () => {
         const portfolioContent = document.getElementById('portfolioContent');
         const assistantResponse = document.getElementById('assistantResponse');
-        
+
         expect(portfolioContent).toBeTruthy();
         expect(assistantResponse).toBeTruthy();
     });
@@ -257,7 +258,7 @@ describe('Portfolio Assistant', () => {
     test('should process valid queries', () => {
         activateAssistant();
         const response = processQuery('What projects do you have?');
-        
+
         expect(response).toBeTruthy();
         expect(response.query).toBe('What projects do you have?');
         expect(response.answer).toContain('Processed');
@@ -274,7 +275,7 @@ describe('Portfolio Assistant', () => {
         processQuery('Query 1');
         processQuery('Query 2');
         processQuery('Query 3');
-        
+
         expect(assistantState.responses.length).toBe(3);
         expect(assistantState.responses[0].query).toBe('Query 1');
         expect(assistantState.responses[2].query).toBe('Query 3');
@@ -293,7 +294,7 @@ describe('LLM Router', () => {
 
     const selectModel = (query, config = routerConfig) => {
         if (!query) return config.defaultModel;
-        
+
         // Simple routing based on query length
         if (query.length < 50) return 'llama-2';
         if (query.length < 200) return 'claude-3';
@@ -314,7 +315,7 @@ describe('LLM Router', () => {
         const shortQuery = 'Hello';
         const mediumQuery = 'This is a medium length query that needs some processing';
         const longQuery = 'a'.repeat(250);
-        
+
         expect(selectModel(shortQuery)).toBe('llama-2');
         expect(selectModel(mediumQuery)).toBe('claude-3');
         expect(selectModel(longQuery)).toBe('gpt-4');
@@ -336,7 +337,7 @@ describe('LLM Router', () => {
             ...routerConfig,
             defaultModel: 'claude-3'
         };
-        
+
         expect(selectModel('', customConfig)).toBe('claude-3');
     });
 });
@@ -361,7 +362,7 @@ describe('Portfolio Agent Engine', () => {
         if (!agentState.initialized || !task) {
             return false;
         }
-        
+
         agentState.taskQueue.push({
             id: Date.now(),
             task: task,
@@ -394,7 +395,7 @@ describe('Portfolio Agent Engine', () => {
     test('should add tasks to queue', () => {
         initializeEngine();
         const result = addTask('Generate portfolio summary');
-        
+
         expect(result).toBe(true);
         expect(agentState.taskQueue.length).toBe(1);
         expect(agentState.taskQueue[0].task).toBe('Generate portfolio summary');
@@ -409,10 +410,10 @@ describe('Portfolio Agent Engine', () => {
     test('should process tasks', () => {
         initializeEngine();
         addTask('Test task');
-        
+
         const taskId = agentState.taskQueue[0].id;
         const result = processTask(taskId);
-        
+
         expect(result).toBe(true);
         expect(agentState.taskQueue[0].status).toBe('completed');
     });
@@ -437,22 +438,20 @@ describe('Integration Tests', () => {
             'resume-generator.html',
             'llm-router-demo.html'
         ];
-        
+
         // Simulate checking navigation consistency
-        const hasNavigation = pages.every(page => {
-            // In real scenario, would load and check each page
-            return true; // Simplified for test
-        });
-        
+        // Simulate checking navigation consistency
+        const hasNavigation = pages.every(() => true); // no unused param
         expect(hasNavigation).toBe(true);
     });
+
 
     test('CSS files should match their HTML counterparts', () => {
         const componentPairs = [
             { html: 'portfolio-assistant.html', css: 'portfolio-assistant.css' },
             { html: 'resume-generator.html', css: 'resume-generator.css' }
         ];
-        
+
         componentPairs.forEach(pair => {
             // In real scenario, would check if CSS file exists for HTML
             expect(pair.css).toBeDefined();
@@ -467,40 +466,39 @@ describe('Integration Tests', () => {
             'resume-ai-engine.js',
             'resume-generator.js'
         ];
-        
+
         jsModules.forEach(module => {
             // Check if module would load
             expect(module).toMatch(/\.js$/);
         });
     });
 });
-
 // ============================================
 // PERFORMANCE TESTS
 // ============================================
 describe('Performance Tests', () => {
     test('DOM operations should be efficient', () => {
         const startTime = performance.now();
-        
+
         for (let i = 0; i < 1000; i++) {
             const div = document.createElement('div');
             div.textContent = `Item ${i}`;
             document.body.appendChild(div);
         }
-        
+
         const endTime = performance.now();
         const duration = endTime - startTime;
-        
+
         expect(duration).toBeLessThan(100); // Should complete in under 100ms
     });
 
     test('state updates should be synchronous', () => {
         const state = { value: 0 };
-        
+
         for (let i = 0; i < 1000; i++) {
             state.value = i;
         }
-        
+
         expect(state.value).toBe(999);
     });
 });
@@ -518,7 +516,7 @@ describe('Accessibility Tests', () => {
                 <input id="email" type="email">
             </form>
         `;
-        
+
         const inputs = document.querySelectorAll('input');
         inputs.forEach(input => {
             const label = document.querySelector(`label[for="${input.id}"]`);
@@ -531,7 +529,7 @@ describe('Accessibility Tests', () => {
             <img src="profile.jpg" alt="Profile photo">
             <img src="project1.png" alt="Project screenshot">
         `;
-        
+
         const images = document.querySelectorAll('img');
         images.forEach(img => {
             expect(img.getAttribute('alt')).toBeTruthy();
@@ -543,7 +541,7 @@ describe('Accessibility Tests', () => {
             <button tabindex="0">Click me</button>
             <button tabindex="0">Submit</button>
         `;
-        
+
         const buttons = document.querySelectorAll('button');
         buttons.forEach(button => {
             const tabindex = button.getAttribute('tabindex');
@@ -551,14 +549,3 @@ describe('Accessibility Tests', () => {
         });
     });
 });
-
-// Export test utilities for other test files
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = {
-        sendMessage,
-        generateResume,
-        processQuery,
-        selectModel,
-        initializeEngine
-    };
-}

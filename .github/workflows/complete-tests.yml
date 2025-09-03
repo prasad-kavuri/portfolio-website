@@ -1,3 +1,5 @@
+name: Complete Tests
+
 on:
   push:
     branches: [ main ]
@@ -6,126 +8,126 @@ on:
   schedule:
     - cron: '0 0 * * 0'  # Weekly on Sunday
 
+concurrency:
+  group: complete-tests-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   unit-tests:
     runs-on: ubuntu-latest
     name: Unit Tests - All Components
-    
+
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-        cache: 'npm'
-    
-    - name: Install dependencies
-      run: npm ci
-    
-    - name: Run all unit tests
-      run: |
-        echo "🧪 Running unit tests for all components..."
-        npm run test:unit
-    
-    - name: Generate coverage report
-      run: npm run test:coverage
-      continue-on-error: true
-    
-    - name: Upload coverage
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: coverage-report
-        path: coverage/
-        retention-days: 30
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run unit tests
+        run: npm run test:unit -- --coverage
+
+      - name: Upload coverage (always)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/
+          retention-days: 30
 
   e2e-tests:
     runs-on: ubuntu-latest
     name: E2E Tests - All Pages
-    
+    needs: unit-tests  # run after unit
+
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-        cache: 'npm'
-    
-    - name: Install dependencies
-      run: npm ci
-    
-    - name: Install Playwright
-      run: npx playwright install --with-deps chromium
-    
-    - name: Start server
-      run: |
-        npm run serve &
-        sleep 5
-        curl http://localhost:8080 || echo "Server starting..."
-    
-    - name: Run E2E tests for all pages
-      run: |
-        echo "🌐 Running E2E tests for all pages..."
-        npx playwright test all-pages.e2e.spec.js
-      continue-on-error: true
-    
-    - name: Upload test results
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: playwright-report
-        path: playwright-report/
-        retention-days: 30
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright (browsers + deps)
+        run: npx playwright install --with-deps
+
+      # No manual server needed; Playwright's webServer in playwright.config.js will start it on 8081
+      - name: Run E2E tests (Playwright)
+        run: npm run test:e2e
+
+      - name: Upload Playwright artifacts (on failure)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-artifacts
+          path: |
+            playwright-report
+            test-results
+            blob-report
 
   component-tests:
     runs-on: ubuntu-latest
     name: Component-Specific Tests
+    needs: unit-tests
     strategy:
+      fail-fast: false
       matrix:
-        component: 
+        component:
           - chatbot
           - resume-generator
           - portfolio-assistant
           - llm-router
           - rag-pipeline
-    
+
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-        cache: 'npm'
-    
-    - name: Install dependencies
-      run: npm ci
-    
-    - name: Test ${{ matrix.component }}
-      run: |
-        echo "Testing ${{ matrix.component }} component..."
-        # Run specific test based on component
-        if [ -f "${{ matrix.component }}.test.js" ]; then
-          npx jest ${{ matrix.component }}.test.js
-        else
-          echo "No specific test file for ${{ matrix.component }}, running general tests"
-          npx jest complete-tests.test.js -t "${{ matrix.component }}"
-        fi
-      continue-on-error: true
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Test ${{ matrix.component }}
+        run: |
+          echo "🧪 Testing ${{ matrix.component }} component..."
+          if [ -f "${{ matrix.component }}.test.js" ]; then
+            npx jest ${{ matrix.component }}.test.js
+          else
+            echo "No dedicated test file; filtering complete suite for '${{ matrix.component }}'"
+            npx jest complete-tests.test.js -t "${{ matrix.component }}"
+          fi
 
   test-summary:
     needs: [unit-tests, e2e-tests, component-tests]
     runs-on: ubuntu-latest
     if: always()
-    
+
     steps:
-    - name: Test Summary
-      run: |
-        echo "## 📊 Test Summary"
-        echo "✅ Unit Tests: ${{ needs.unit-tests.result }}"
-        echo "✅ E2E Tests: ${{ needs.e2e-tests.result }}"
-        echo "✅ Component Tests: ${{ needs.component-tests.result }}"
-        echo ""
-        echo "All test suites completed!"
+      - name: Test Summary
+        run: |
+          echo "## 📊 Test Summary"
+          echo "Unit Tests:       ${{ needs.unit-tests.result }}"
+          echo "E2E Tests:        ${{ needs.e2e-tests.result }}"
+          echo "Component Tests:  ${{ needs.component-tests.result }}"
+          echo ""
+          if [ "${{ needs.unit-tests.result }}" = "success" ] && \
+             [ "${{ needs.e2e-tests.result }}" = "success" ] && \
+             [ "${{ needs.component-tests.result }}" = "success" ]; then
+            echo "✅ All test suites passed."
+          else
+            echo "❌ Some test suites failed."
+            exit 1
+          fi

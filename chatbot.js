@@ -326,6 +326,7 @@ What would you like to know about?
     }
 }
 
+
 // Quick message function for action buttons
 function sendQuickMessage(message) {
     const chatInput = document.getElementById('chatInput');
@@ -336,6 +337,18 @@ function sendQuickMessage(message) {
         sendBtn.click();
     }
 }
+
+// Expose to the page (so inline HTML like onclick="sendQuickMessage('Hi')" works)
+// and so ESLint sees the function as “used”.
+if (typeof window !== 'undefined') {
+    window.sendQuickMessage = sendQuickMessage;
+}
+
+// (Optional) Export for tests so Jest can import it without touching window.
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { sendQuickMessage };
+}
+
 
 // Initialize chatbot when page loads
 document.addEventListener('DOMContentLoaded', () => {
