@@ -14,18 +14,15 @@ module.exports = {
     '!**/playwright-report/**',
     '!jest.config.js',
     '!playwright.config.js',
-    '!multi-agent-demo.js',      // Exclude temporarily
-    '!test-*.js',                // Exclude test files
-    '!data/**',                  // Exclude data files
-    '!lib/agents/**'             // Exclude agent files temporarily
+    '!multi-agent-demo.js',
+    '!data/**',
+    '!lib/agents/**'
   ],
 
-  setupFilesAfterEnv: ['<rootDir>/test-setup.js'],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/$1'
   },
 
-  // Set to 0 temporarily to pass CI
   coverageThreshold: {
     global: {
       branches: 0,
