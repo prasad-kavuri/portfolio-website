@@ -4,6 +4,7 @@
     "description": "RAG Pipeline Demo with Testing Suite",
     "main": "index.html",
     "scripts": {
+        "lint": "echo 'No linting configured'",
         "test": "npm run test:unit && npm run test:e2e",
         "test:unit": "jest",
         "test:e2e": "playwright test",
