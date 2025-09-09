@@ -4,17 +4,18 @@
     "description": "RAG Pipeline Demo with Testing Suite",
     "main": "index.html",
     "scripts": {
-        "test": "jest",
+        "test": "npm run test:unit && npm run test:e2e",
         "test:unit": "jest",
         "test:e2e": "playwright test",
-        "test:watch": "jest --watch",
-        "test:coverage": "jest --coverage",
-        "test:ui": "open test-suite.html",
-        "lint": "eslint *.js",
-        "lint:fix": "eslint *.js --fix",
-        "serve": "http-server -p ${PORT:-8081} -c-1 .",
-        "validate": "html-validate *.html",
-        "test:all": "npm run test:unit && npm run test:e2e"
+        "test:e2e:multimodal": "playwright test multimodal-assistant",
+        "test:e2e:vector": "playwright test vector-search-playground",
+        "test:e2e:all": "playwright test vector-search-playground && playwright test multimodal-assistant",
+        "test:e2e:headed": "playwright test --headed",
+        "test:e2e:debug": "playwright test --debug",
+        "test:e2e:ui": "playwright test --ui",
+        "test:report": "playwright show-report",
+        "serve": "python -m http.server 3000",
+        "serve:node": "npx http-server -p 3000"
     },
     "keywords": [
         "rag",
