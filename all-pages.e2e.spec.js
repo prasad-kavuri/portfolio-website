@@ -236,7 +236,7 @@ test.describe('Cross-Page Navigation', () => {
         if (await ragLink.isVisible().catch(() => false)) {
             await ragLink.click();
             await page.waitForLoadState('domcontentloaded');
-            expect(page.url()).toContain('rag-pipeline');
+            expect(page.url()).toContain('rag-pipeline.html');
         }
     });
 
@@ -264,6 +264,15 @@ test.describe('Cross-Page Navigation', () => {
             }
         }
     });
+
+    test('should navigate to ai-quantization-demo', async ({ page }) => {
+  await page.goto('/');
+  const quantizationLink = page.locator('[data-tool="ai-quantization"] .ai-tool-btn');
+  await quantizationLink.click();
+  await page.waitForLoadState('domcontentloaded');
+  expect(page.url()).toContain('ai-quantization-demo');
+});
+
 });
 
 /* =========================

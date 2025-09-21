@@ -15,7 +15,7 @@
         "test:e2e:debug": "playwright test --debug",
         "test:e2e:ui": "playwright test --ui",
         "test:report": "playwright show-report",
-        "serve": "python -m http.server 3000",
+        "serve": "python3 -m http.server 3000",
         "serve:node": "npx http-server -p 3000"
     },
     "keywords": [
